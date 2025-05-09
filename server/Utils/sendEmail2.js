@@ -20,9 +20,9 @@
 
 const {CourierClient} = require('@trycourier/courier')
 
-const API_KEY_COURIER = 'pk_prod_R87VK9DSNYMHBBMNSNPTB3TH2GCD'
+const API_KEY_COURIER = "pk_prod_MQS8Y0MYHTMKHXJVT7Y9V4CQY5N9"
 
-const courier = CourierClient({authorizationToken:API_KEY_COURIER})
+const courier = new CourierClient({authorizationToken:API_KEY_COURIER})
 
 //send email using courier
 const sendEmail2 = async(mailData)=>{

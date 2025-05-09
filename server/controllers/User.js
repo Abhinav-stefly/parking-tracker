@@ -4,11 +4,13 @@ const crypto = require('crypto'); // For generating OTP
 
 const { loginValidator} = require('../validators/validators');
 const jwt = require('jsonwebtoken');
+const { generateOTP } = require('../Utils/generateOTP');
+const sendEmail2 = require('../Utils/sendEmail2')
 
 exports.sendOTP = async (req, res) =>{
   const {email, password, confirmPassword, firstName, lastName, userName, mobileNo, selectedImg, currTimeStamp} = req.body;
 
-  const otpGenerated = "12345";
+  const otpGenerated = generateOTP();
   const newUser = await User.create({
     email : email,
      password : password,
@@ -24,8 +26,70 @@ exports.sendOTP = async (req, res) =>{
   if(!newUser){
 return res.status(400).json({msg : "user not created"})
   }
-  return res.status(200).json({msg : "user created succesfully"})
+
+  const subject = "[Smart Parking] Welcome smart parker"
+  const html = `
+      Welcome to the club
+          You are just one step away from becoming a smart parker
+              Please enter the sign up OTP to get started
+                          ${otpGenerated}
+          If you haven't made this request. simply ignore the mail and no changes will be made`
+  const receiverMail =email
+
+  await sendEmail2({ html, subject, receiverMail })
+  return res.status(200).json({msg : "user created succesfully. OTP sent to mail"})
 }
+
+exports.resendOTP = async (req, res) =>{
+if(!req.body.email){
+  return res.status(400).json({msg :"email is required"})
+}
+
+const existingUser = await User.findOne({email : req.body.email})
+if(!existingUser){
+  return res.status(400).json({msg :"no user exists"})
+}
+
+const otpGenerated = generateOTP();
+if(!req.body.email){
+  return res.status(400).json({msg :"otp not sent "})
+}
+const subject = "[Smart Parking] Welcome smart parker"
+        const html = `
+            Welcome to the club
+            You are just one step away from becoming a smart parker
+                Please enter the sign up OTP to get started
+                            ${otpGenerated}
+            If you haven't made this request. simply ignore the mail and no changes will be made`
+        const receiverMail = req.body.email
+        await sendEmail2({html,subject,receiverMail})
+
+        await User.findByIdAndUpdate(existingUser._id,{otp:otpGenerated})
+        console.log(`${existingUser.otp}`)
+res.status(200).json({msg : "otp sent successfully"})
+}
+
+exports.verifyEmail = async (req, res) =>{
+  const {email, otp} = req.body;
+  if(!email || !otp){
+    return res.status(400).json({msg : "email and otp are required"})
+  }
+
+  const existingUser = await User.findOne({email : email});
+  if(!existingUser){
+    res.status(400).json({msg : "user not found"})
+  }
+  if(otp !== existingUser.otp){
+    return res.status(400).json({msg :"otp not matched"});
+  }
+  const updatedUser = await User.findByIdAndUpdate(existingUser._id,{verified : true,})
+  if(!existingUser.verified){
+    return res.status(400).json({msg : "user not verified"});
+  }
+
+  return res.status(200).json({msg :"user verified successfully"})
+}
+
 
 exports.signIn = async (req, res) =>{
   const {email, password} = req.body;
