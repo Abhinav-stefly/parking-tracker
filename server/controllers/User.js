@@ -82,7 +82,7 @@ exports.verifyEmail = async (req, res) =>{
   if(otp !== existingUser.otp){
     return res.status(400).json({msg :"otp not matched"});
   }
-  const updatedUser = await User.findByIdAndUpdate(existingUser._id,{verified : true,})
+  const updatedUsers = await User.findByIdAndUpdate(existingUser._id,{verified : true,})
   if(!existingUser.verified){
     return res.status(400).json({msg : "user not verified"});
   }
