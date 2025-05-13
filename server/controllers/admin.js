@@ -24,5 +24,5 @@ exports.createAdmin = async (req, res) =>{
 }
 
 exports.getUserName = async (req, res) =>{
-  
+  const reqUser = await User.find
 }
