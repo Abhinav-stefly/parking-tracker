@@ -9,7 +9,7 @@ exports.createAdmin = async (req, res) =>{
     email : 'smartParking123@gmail.com',
     password : 'admin123',
     firstName : 'Smart',
-    LastName :'Parking',
+    lastName :'Parking',
     userName :"smparking",
     mobileNo : '3294210401',
     createdAt : new Date().toISOString(),
@@ -24,5 +24,26 @@ exports.createAdmin = async (req, res) =>{
 }
 
 exports.getUserName = async (req, res) =>{
-  const reqUser = await User.find
+  if(!req.userId) {
+    return res.status(400).json({
+      msg :"user not found"
+    })
+  }
+  try {
+const reqUser = await User.findById(req.userId);
+
+var users = await User.find({role: "user"}, {firstName : 1, lastName : 1})
+
+users = users.map(user =>({
+  id : user._id,
+  Name: user.firstName+" "+ user.lastName,
+}))
+
+res.status(200).json({
+  msg :"Users List returned", userName : users
+})
+  }
+  catch(err){
+    return res.status(500).json({ msg: "Something went wrong" })
+  }
 }

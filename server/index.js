@@ -17,6 +17,7 @@ app.get('/', (req, res)=>{
 })
 
 app.use('/api/v1/users',require('./routes/users'))
+app.use('/api/v1/admin',require('./routes/admin'))
 const PORT = process.env.PORT
 
 app.listen(PORT, ()=>{ console.log(`Server is running  ${PORT}`)
