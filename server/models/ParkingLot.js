@@ -73,6 +73,7 @@ type :{
 
 })
 
+
 ParkingLotSchema.index({location :"2dsphere"})
 const ParkingLot = mongoose.model('ParkingLot',ParkingLotSchema)
 

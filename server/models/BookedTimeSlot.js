@@ -14,6 +14,10 @@ const BookedTimeSlotSchema = new mongoose.Schema({
   parkingSlot : {
     type : mongoose.Schema.Types.ObjectId,
     },
+    vehicleType:{
+      type:String,
+      required:true
+  },
     booker :{
       type : mongoose.Schema.Types.ObjectId
     },
@@ -49,6 +53,10 @@ const BookedTimeSlotSchema = new mongoose.Schema({
   },
   refundDetails:{
       type:Object
+  },
+  cancelled :{
+    type : Boolean,
+    default : false
   },
   notified:{
       type:Boolean,
